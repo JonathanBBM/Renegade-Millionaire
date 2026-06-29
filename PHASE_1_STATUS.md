@@ -14,6 +14,14 @@ Date: 2026-06-29
   - Production alias: `https://renegade-millionaire-app.vercel.app`
   - Deployment: `https://renegade-millionaire-o256wzphe-jonathanbbms-projects.vercel.app`
   - Deployment id: `dpl_71XmUNnfjZxRrgk1T9RKnXPPkQmc`
+- Pushed source to GitHub:
+  - Repository: `JonathanBBM/Renegade-Millionaire`
+  - Branch: `main`
+  - Initial commit: `e109657d3124831126b71ffa847aac78508b05e7`
+- Confirmed GitHub-connected Vercel deployment:
+  - Deployment id: `dpl_8tap4wATPpKU2epQ2cPbnys77Xvt`
+  - Source: GitHub commit `e109657d3124831126b71ffa847aac78508b05e7`
+  - Status: `READY`
 - Installed Phase 1 dependencies:
   - `@supabase/supabase-js`
   - `@tanstack/react-query`
@@ -55,6 +63,7 @@ Date: 2026-06-29
 - Vercel deployment verification:
   - Production deployment status: `Ready`
   - Production alias HTTP status: `200 OK`
+  - GitHub-triggered deployment status: `READY`
 
 ## Still Needed
 
