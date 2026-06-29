@@ -22,6 +22,14 @@ Date: 2026-06-29
   - Deployment id: `dpl_8tap4wATPpKU2epQ2cPbnys77Xvt`
   - Source: GitHub commit `e109657d3124831126b71ffa847aac78508b05e7`
   - Status: `READY`
+- Started Phase 2 course pipeline:
+  - Added Supabase seed migration `0002_phase2_course_seed.sql`.
+  - Seeded all 11 course modules as published Supabase content.
+  - Seeded 87 structured course sections with `reading`, `reflection`, `form`, and `rating` types.
+  - Added app-side course data service, course hook, section/progress types, and shared course UI shell.
+  - Replaced Course placeholder with module list, progress counts, status badges, and locked/unlocked states.
+  - Added module detail route and generic section renderer.
+  - Added progress upsert completion flow into `progress`.
 - Installed Phase 1 dependencies:
   - `@supabase/supabase-js`
   - `@tanstack/react-query`
@@ -60,10 +68,16 @@ Date: 2026-06-29
 - Remote Supabase schema verification:
   - `public_table_count = 23`
   - `warrior_category_count = 7`
+- Remote Supabase content verification:
+  - `module_count = 11`
+  - `section_count = 87`
 - Vercel deployment verification:
   - Production deployment status: `Ready`
   - Production alias HTTP status: `200 OK`
   - GitHub-triggered deployment status: `READY`
+- Phase 2 local verification:
+  - `npx.cmd tsc --noEmit` passes.
+  - `npm.cmd run build` passes and exports 25 static web routes.
 
 ## Still Needed
 
@@ -74,6 +88,8 @@ Date: 2026-06-29
   - Confirm protected dashboard loads
   - Confirm `profiles` row is created
 - Run two-user RLS verification after the migration is applied.
+- Replace outline seed lesson bodies with full extracted module copy during the deeper content-authoring pass.
+- Build Phase 3 worksheet/form components for the structured `form` and `rating` section configs.
 
 ## Schema Notes
 

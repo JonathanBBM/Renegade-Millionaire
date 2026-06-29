@@ -46,6 +46,20 @@ export default function AppLayout() {
         }}
       />
       <Tabs.Screen
+        name="course/[moduleId]"
+        options={{
+          href: null,
+          title: 'Module',
+        }}
+      />
+      <Tabs.Screen
+        name="course/section/[sectionId]"
+        options={{
+          href: null,
+          title: 'Section',
+        }}
+      />
+      <Tabs.Screen
         name="goals/index"
         options={{
           title: 'Goals',
