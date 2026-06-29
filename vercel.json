@@ -1,0 +1,11 @@
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "framework": null,
+  "env": {
+    "EXPO_PUBLIC_SUPABASE_URL": "https://qrazptjoyoaibxdhofuz.supabase.co",
+    "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_n5nLsudueMIp3f03xaDlqA_huK6rCZk",
+    "EXPO_PUBLIC_APP_SCHEME": "renegademillionaireapp",
+    "EXPO_PUBLIC_SITE_URL": "https://renegade-millionaire-app.vercel.app"
+  }
+}
