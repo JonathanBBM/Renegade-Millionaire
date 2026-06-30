@@ -8,11 +8,34 @@ export type SectionContent = {
 
 export type ExerciseConfig = {
   actionLabel?: string;
+  description?: string;
   fields?: Array<{
+    helper?: string;
     key: string;
     label: string;
-    type: 'text' | 'textarea' | 'number' | 'slider';
+    options?: string[];
+    placeholder?: string;
+    type: 'text' | 'textarea' | 'number' | 'select' | 'checkbox';
   }>;
+  groups?: Array<{
+    fields: Array<{
+      helper?: string;
+      key: string;
+      label: string;
+      options?: string[];
+      placeholder?: string;
+      type: 'text' | 'textarea' | 'number' | 'select' | 'checkbox';
+    }>;
+    key: string;
+    label: string;
+    repeat?: number;
+    rowLabels?: string[];
+  }>;
+  ratings?: {
+    labels: string[];
+    max: number;
+    min: number;
+  };
   scale?: {
     min: number;
     max: number;

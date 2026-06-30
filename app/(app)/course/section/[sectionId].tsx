@@ -1,9 +1,10 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { router, useLocalSearchParams } from 'expo-router';
-import { useMemo, useState } from 'react';
-import { Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { useEffect, useMemo, useState } from 'react';
+import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { CourseError, CourseLoading, CourseScreenShell, courseStyles } from '@/src/components/course/CourseChrome';
+import { ExerciseRenderer } from '@/src/components/course/ExerciseRenderer';
 import { useCourseData } from '@/src/hooks/useCourseData';
 import { useAuth } from '@/src/providers/AuthProvider';
 import { completeSection, getModuleStatus, getProgressMap, getSectionById } from '@/src/services/course';
@@ -13,11 +14,16 @@ export default function SectionScreen() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const { isLoading, modules, modulesError, progress, progressError } = useCourseData();
-  const [responseText, setResponseText] = useState('');
+  const [response, setResponse] = useState<Record<string, unknown>>({});
   const [isSaving, setIsSaving] = useState(false);
 
   const progressMap = useMemo(() => getProgressMap(progress), [progress]);
   const match = getSectionById(modules, sectionId);
+  const existingProgress = match ? progressMap.get(match.section.id) : undefined;
+
+  useEffect(() => {
+    setResponse(existingProgress?.response ?? {});
+  }, [existingProgress?.completed_at, match?.section.id]);
 
   if (isLoading) {
     return <CourseLoading />;
@@ -33,10 +39,8 @@ export default function SectionScreen() {
 
   const { module, section } = match;
   const moduleStatus = getModuleStatus(modules, module, progressMap);
-  const existingProgress = progressMap.get(section.id);
   const isComplete = existingProgress?.status === 'complete';
   const body = section.content?.body ?? section.content?.summary ?? '';
-  const prompts = section.content?.prompts ?? [];
   const actionLabel = section.exercise_config?.actionLabel ?? 'Mark complete';
 
   if (moduleStatus === 'locked') {
@@ -49,7 +53,7 @@ export default function SectionScreen() {
     setIsSaving(true);
     try {
       await completeSection(user.id, section, {
-        text: responseText || existingProgress?.response?.text || '',
+        ...response,
         completedFrom: 'section-renderer',
       });
       await queryClient.invalidateQueries({ queryKey: ['course-progress', user.id] });
@@ -86,34 +90,7 @@ export default function SectionScreen() {
           </View>
         ) : null}
 
-        {prompts.length > 0 ? (
-          <View style={courseStyles.card}>
-            <Text style={courseStyles.sectionTitle}>Reflection</Text>
-            {prompts.map((prompt) => (
-              <Text key={prompt} style={courseStyles.copy}>
-                {prompt}
-              </Text>
-            ))}
-            <TextInput
-              multiline
-              onChangeText={setResponseText}
-              placeholder="Write your notes here..."
-              placeholderTextColor="#828a80"
-              style={styles.textArea}
-              value={responseText || String(existingProgress?.response?.text ?? '')}
-            />
-          </View>
-        ) : null}
-
-        {section.section_type === 'rating' ? (
-          <View style={courseStyles.card}>
-            <Text style={courseStyles.sectionTitle}>Rating Drill</Text>
-            <Text style={courseStyles.copy}>
-              Score each category from {section.exercise_config?.scale?.min ?? 1} to {section.exercise_config?.scale?.max ?? 10}.
-              Detailed sliders arrive in Phase 3; for now, complete this section when you have done the assessment.
-            </Text>
-          </View>
-        ) : null}
+        <ExerciseRenderer onChange={setResponse} response={response} section={section} />
 
         <Pressable disabled={isSaving} onPress={handleComplete} style={courseStyles.button}>
           <Text style={courseStyles.buttonText}>{isSaving ? 'Saving...' : actionLabel}</Text>
@@ -127,15 +104,4 @@ const styles = StyleSheet.create({
   complete: { color: '#d5a84c', fontSize: 14, fontWeight: '900' },
   content: { gap: 16, paddingBottom: 40 },
   header: { gap: 8 },
-  textArea: {
-    backgroundColor: '#101410',
-    borderColor: '#343a32',
-    borderRadius: 8,
-    borderWidth: 1,
-    color: '#f5f1e8',
-    fontSize: 16,
-    minHeight: 140,
-    padding: 12,
-    textAlignVertical: 'top',
-  },
 });

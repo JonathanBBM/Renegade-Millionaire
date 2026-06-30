@@ -1,6 +1,6 @@
-# Phase 1 Status
+# Build Status
 
-Date: 2026-06-29
+Last updated: 2026-06-30
 
 ## Completed
 
@@ -78,18 +78,53 @@ Date: 2026-06-29
 - Phase 2 local verification:
   - `npx.cmd tsc --noEmit` passes.
   - `npm.cmd run build` passes and exports 25 static web routes.
+- Started Phase 3 worksheet/forms:
+  - Added reusable `ExerciseRenderer` for course `reflection`, `form`, and `rating` sections.
+  - Added structured response support for flat fields, repeated groups, row-labeled grids, select options, checkboxes, and 1-10 rating rows.
+  - Replaced the Phase 2 placeholder rating message with interactive rating buttons.
+  - Updated section completion to save the whole structured response object in `progress.response`.
+  - Added Supabase migration `0003_phase3_exercise_configs.sql`.
+  - Seeded richer worksheet configs for key forms:
+    - WARRIOR Map
+    - Next 3 Major Goals
+    - Top 3 Goals
+    - 100 Reasons Why
+    - 100 Consequences
+    - Mission Brief
+    - Statement of Desire
+    - Discover Your Mission
+    - Mission Statement
+    - Mission Brief Declaration
+    - 15-Year WARRIOR Vision
+    - Monthly Battle Plans
+    - Daily Strikes
+    - Task Scoring Tool
+    - Four Pillars
+    - Morning and Evening Routines
+    - WARRIOR Check-In
+    - Morning Setup
+    - Habit Streaks
+    - Evening Reflection
+    - Weekly Reset
+    - Daily Targets
+    - Warrior's Creed
+    - Daily Creed Practice
+- Applied Phase 3 migration `0003_phase3_exercise_configs.sql` to remote Supabase project `qrazptjoyoaibxdhofuz`.
+- Verified remote Phase 3 configs on `top-3-goals`, `warrior-map`, `morning-setup`, and `craft-warriors-creed`.
+- Phase 3 local verification:
+  - `npx.cmd tsc --noEmit` passes.
+  - `npm.cmd run build` passes and exports 25 static web routes.
 
 ## Still Needed
 
-- Run real auth smoke test:
-  - Sign up
-  - Confirm email if enabled
-  - Sign in
-  - Confirm protected dashboard loads
-  - Confirm `profiles` row is created
+- Map structured worksheet responses into first-class app tables during the relevant feature phases:
+  - Phase 4: `goals`, `goal_reasons`, `vision_entries`, time-horizon goal tables.
+  - Phase 5: `battle_reports_daily`, `battle_reports_weekly`, habit streak engine.
+  - Phase 6: `affirmations`, routines, reminders, quotes/dashboard aggregation.
 - Run two-user RLS verification after the migration is applied.
 - Replace outline seed lesson bodies with full extracted module copy during the deeper content-authoring pass.
-- Build Phase 3 worksheet/form components for the structured `form` and `rating` section configs.
+- Add signature capture for Mission Brief Declaration in the native app slice.
+- Add computed score automation for Task Scoring and Warrior Score once formulas are confirmed.
 
 ## Schema Notes
 
