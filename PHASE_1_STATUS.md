@@ -132,6 +132,15 @@ Last updated: 2026-06-30
 - Phase 4 local verification:
   - `npx.cmd tsc --noEmit` passes.
   - `npm.cmd run build` passes and exports 25 static web routes.
+- Course content refresh:
+  - Extracted fuller app-ready lesson copy from source DOCX files for RM_00 through RM_10.
+  - Added Supabase migration `0004_course_content_refresh.sql`.
+  - Updated existing section bodies by module slug + section slug, preserving existing prompts and Phase 3 worksheet configs.
+  - Applied migration `0004_course_content_refresh.sql` to remote Supabase project `qrazptjoyoaibxdhofuz`.
+  - Verified refreshed content coverage across all 11 modules.
+- Course content refresh verification:
+  - `npx.cmd tsc --noEmit` passes.
+  - `npm.cmd run build` passes and exports 25 static web routes.
 
 ## Still Needed
 
@@ -140,7 +149,7 @@ Last updated: 2026-06-30
   - Phase 5: `battle_reports_daily`, `battle_reports_weekly`, habit streak engine.
   - Phase 6: `affirmations`, routines, reminders, quotes/dashboard aggregation.
 - Run two-user RLS verification after the migration is applied.
-- Replace outline seed lesson bodies with full extracted module copy during the deeper content-authoring pass.
+- Continue deep content pass where exact long-form source text is needed beyond the app-ready summarized lesson bodies.
 - Add signature capture for Mission Brief Declaration in the native app slice.
 - Add computed score automation for Task Scoring and Warrior Score once formulas are confirmed.
 
