@@ -238,13 +238,22 @@ Last updated: 2026-06-30
 - Phase 6 reminders verification:
   - `npx.cmd tsc --noEmit` passes.
   - `npm.cmd run build` passes and exports 25 static web routes.
+- Continued Phase 6 native notification scheduling:
+  - Installed SDK-compatible `expo-notifications`.
+  - Added Expo notifications config plugin in `app.json`.
+  - Added `src/services/localNotifications.ts` for native daily local notification scheduling.
+  - Profile now includes a `Sync Local Notifications` action that requests permission on native builds and schedules enabled reminder preferences.
+  - Web builds skip native scheduling with a clear message.
+- Phase 6 native notification verification:
+  - `npx.cmd tsc --noEmit` passes.
+  - `npm.cmd run build` passes and exports 25 static web routes.
 
 ## Still Needed
 
 - Map structured worksheet responses into first-class app tables during the relevant feature phases:
   - Phase 4 continuation: `goal_reasons`, `vision_entries`, time-horizon goal tables, monthly/weekly/daily planning rows.
   - Phase 5 continuation: final Warrior Score formula and deeper Battle Report analytics.
-  - Phase 6 continuation: native push/local notification scheduling and custom creed storage.
+  - Phase 6 continuation: custom creed storage beyond affirmation lines and server-driven push notifications.
 - Run two-user RLS verification after the migration is applied.
 - Continue deep content pass where exact long-form source text is needed beyond the app-ready summarized lesson bodies.
 - Add signature capture for Mission Brief Declaration in the native app slice.

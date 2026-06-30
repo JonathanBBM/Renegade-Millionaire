@@ -36,6 +36,13 @@
           "backgroundColor": "#0f1210"
         }
       ],
+      [
+        "expo-notifications",
+        {
+          "color": "#d5a84c",
+          "defaultChannel": "renegade-millionaire"
+        }
+      ],
       "expo-secure-store"
     ],
     "experiments": {

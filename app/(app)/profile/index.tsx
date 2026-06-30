@@ -6,6 +6,7 @@ import { AppLoading, AppScreen, EmptyState } from '@/src/components/ui/AppShell'
 import { useProfileData } from '@/src/hooks/useProfileData';
 import { useRemindersData } from '@/src/hooks/useRemindersData';
 import { useAuth } from '@/src/providers/AuthProvider';
+import { syncLocalNotifications } from '@/src/services/localNotifications';
 import { archiveRoutine, createCustomAffirmation, createRoutine, deleteCustomAffirmation } from '@/src/services/profile';
 import { createReminder, deleteReminder, setReminderEnabled } from '@/src/services/reminders';
 import { Routine } from '@/src/types/profile';
@@ -144,6 +145,19 @@ export default function ProfileScreen() {
     }
   }
 
+  async function syncNotifications() {
+    try {
+      const result = await syncLocalNotifications(reminders);
+      if (result.skippedReason) {
+        Alert.alert('Notifications not scheduled', result.skippedReason);
+        return;
+      }
+      Alert.alert('Notifications scheduled', `${result.scheduledCount} enabled reminders synced on this device.`);
+    } catch (error) {
+      Alert.alert('Could not sync notifications', error instanceof Error ? error.message : 'Please try again.');
+    }
+  }
+
   if (isLoading || remindersLoading) {
     return <AppLoading label="Loading profile..." />;
   }
@@ -249,6 +263,9 @@ export default function ProfileScreen() {
             onPress={saveReminder}
             style={styles.primaryButton}>
             <Text style={styles.primaryButtonText}>{isSaving ? 'Saving...' : 'Save Reminder'}</Text>
+          </Pressable>
+          <Pressable accessibilityRole="button" accessibilityLabel="Sync local notifications" onPress={syncNotifications} style={styles.secondaryButton}>
+            <Text style={styles.secondaryButtonText}>Sync Local Notifications</Text>
           </Pressable>
         </View>
 
