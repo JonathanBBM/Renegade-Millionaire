@@ -1,22 +1,24 @@
 {
   "expo": {
-    "name": "renegade-millionaire-app",
+    "name": "Renegade Millionaire",
     "slug": "renegade-millionaire-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "renegademillionaireapp",
-    "userInterfaceStyle": "automatic",
+    "userInterfaceStyle": "dark",
     "ios": {
+      "bundleIdentifier": "co.brassballs.renegademillionaire",
       "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
+        "backgroundColor": "#0f1210",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
+      "package": "co.brassballs.renegademillionaire",
       "predictiveBackGestureEnabled": false
     },
     "web": {
@@ -31,7 +33,7 @@
         {
           "image": "./assets/images/splash-icon.png",
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "backgroundColor": "#0f1210"
         }
       ],
       "expo-secure-store"

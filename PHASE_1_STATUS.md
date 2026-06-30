@@ -210,6 +210,16 @@ Last updated: 2026-06-30
 - Phase 7 polish verification:
   - `npx.cmd tsc --noEmit` passes.
   - `npm.cmd run build` passes and exports 25 static web routes.
+- Started Phase 8 ship prep:
+  - Updated `app.json` production app name to Renegade Millionaire.
+  - Set native bundle/package id to `co.brassballs.renegademillionaire`.
+  - Forced native user interface style and splash background to the dark brand theme.
+  - Added `eas.json` with development, preview/internal, and production build profiles.
+  - Added `docs/PRIVACY_POLICY_DRAFT.md` covering account, progress, goals, Battle Report, routine, affirmation, and health-adjacent tracking data.
+  - Added `docs/PHASE_8_SHIPPING_CHECKLIST.md` for web, native internal build, store listing, screenshots, and pre-release blockers.
+- Phase 8 ship prep verification:
+  - `npx.cmd tsc --noEmit` passes.
+  - `npm.cmd run build` passes and exports 25 static web routes.
 
 ## Still Needed
 
@@ -221,6 +231,7 @@ Last updated: 2026-06-30
 - Continue deep content pass where exact long-form source text is needed beyond the app-ready summarized lesson bodies.
 - Add signature capture for Mission Brief Declaration in the native app slice.
 - Add computed score automation for Task Scoring and Warrior Score once formulas are confirmed.
+- Confirm Expo/App Store/Play Console account ownership before running EAS internal builds.
 
 ## Schema Notes
 
