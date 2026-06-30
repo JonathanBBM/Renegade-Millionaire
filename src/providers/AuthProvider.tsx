@@ -10,6 +10,7 @@ type Profile = {
   created_at: string;
   full_name: string | null;
   id: string;
+  warrior_creed: string | null;
 };
 
 type AuthContextValue = {

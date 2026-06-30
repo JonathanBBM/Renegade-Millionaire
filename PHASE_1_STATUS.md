@@ -247,13 +247,22 @@ Last updated: 2026-06-30
 - Phase 6 native notification verification:
   - `npx.cmd tsc --noEmit` passes.
   - `npm.cmd run build` passes and exports 25 static web routes.
+- Continued Phase 6 Warrior Creed storage:
+  - Added Supabase migration `0007_profile_warrior_creed.sql`.
+  - Added `profiles.warrior_creed` on the remote Supabase project.
+  - Added profile service support for saving the full Warrior Creed.
+  - Profile now includes a dedicated Warrior Creed editor separate from individual affirmation lines.
+  - Verified the remote `profiles.warrior_creed` column exists.
+- Phase 6 Warrior Creed verification:
+  - `npx.cmd tsc --noEmit` passes.
+  - `npm.cmd run build` passes and exports 25 static web routes.
 
 ## Still Needed
 
 - Map structured worksheet responses into first-class app tables during the relevant feature phases:
   - Phase 4 continuation: `goal_reasons`, `vision_entries`, time-horizon goal tables, monthly/weekly/daily planning rows.
   - Phase 5 continuation: final Warrior Score formula and deeper Battle Report analytics.
-  - Phase 6 continuation: custom creed storage beyond affirmation lines and server-driven push notifications.
+  - Phase 6 continuation: server-driven push notifications.
 - Run two-user RLS verification after the migration is applied.
 - Continue deep content pass where exact long-form source text is needed beyond the app-ready summarized lesson bodies.
 - Add signature capture for Mission Brief Declaration in the native app slice.

@@ -1,5 +1,5 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { AppLoading, AppScreen, EmptyState } from '@/src/components/ui/AppShell';
@@ -7,7 +7,13 @@ import { useProfileData } from '@/src/hooks/useProfileData';
 import { useRemindersData } from '@/src/hooks/useRemindersData';
 import { useAuth } from '@/src/providers/AuthProvider';
 import { syncLocalNotifications } from '@/src/services/localNotifications';
-import { archiveRoutine, createCustomAffirmation, createRoutine, deleteCustomAffirmation } from '@/src/services/profile';
+import {
+  archiveRoutine,
+  createCustomAffirmation,
+  createRoutine,
+  deleteCustomAffirmation,
+  updateWarriorCreed,
+} from '@/src/services/profile';
 import { createReminder, deleteReminder, setReminderEnabled } from '@/src/services/reminders';
 import { Routine } from '@/src/types/profile';
 import { Reminder, ReminderType } from '@/src/types/reminders';
@@ -26,12 +32,17 @@ export default function ProfileScreen() {
   const [reminderLabel, setReminderLabel] = useState('');
   const [reminderTime, setReminderTime] = useState('07:00');
   const [reminderType, setReminderType] = useState<ReminderType>('battle-report');
+  const [warriorCreed, setWarriorCreed] = useState('');
   const [isSaving, setIsSaving] = useState(false);
 
   const customAffirmations = affirmations.filter((affirmation) => affirmation.is_custom);
   const seedAffirmations = affirmations.filter((affirmation) => !affirmation.is_custom);
   const morningRoutines = routines.filter((routine) => routine.routine_type === 'morning');
   const eveningRoutines = routines.filter((routine) => routine.routine_type === 'evening');
+
+  useEffect(() => {
+    setWarriorCreed(profile?.warrior_creed ?? '');
+  }, [profile?.warrior_creed]);
 
   async function refresh() {
     if (!user?.id) return;
@@ -158,6 +169,19 @@ export default function ProfileScreen() {
     }
   }
 
+  async function saveWarriorCreed() {
+    if (!user?.id || isSaving) return;
+    setIsSaving(true);
+    try {
+      await updateWarriorCreed(user.id, warriorCreed);
+      Alert.alert('Warrior Creed saved', 'Your creed is stored on your profile.');
+    } catch (error) {
+      Alert.alert('Could not save creed', error instanceof Error ? error.message : 'Please try again.');
+    } finally {
+      setIsSaving(false);
+    }
+  }
+
   if (isLoading || remindersLoading) {
     return <AppLoading label="Loading profile..." />;
   }
@@ -191,6 +215,20 @@ export default function ProfileScreen() {
             onPress={saveAffirmation}
             style={styles.primaryButton}>
             <Text style={styles.primaryButtonText}>{isSaving ? 'Saving...' : 'Save Affirmation'}</Text>
+          </Pressable>
+        </View>
+
+        <View style={styles.card}>
+          <Text style={styles.sectionTitle}>Warrior Creed</Text>
+          <Text style={styles.copy}>Save the full creed you want to read morning and evening.</Text>
+          <Field label="Creed" multiline onChangeText={setWarriorCreed} value={warriorCreed} />
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Save Warrior Creed"
+            disabled={isSaving}
+            onPress={saveWarriorCreed}
+            style={styles.primaryButton}>
+            <Text style={styles.primaryButtonText}>{isSaving ? 'Saving...' : 'Save Creed'}</Text>
           </Pressable>
         </View>
 

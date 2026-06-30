@@ -77,3 +77,14 @@ export async function archiveRoutine(userId: string, routineId: string) {
     throw error;
   }
 }
+
+export async function updateWarriorCreed(userId: string, warriorCreed: string) {
+  const { error } = await supabase
+    .from('profiles')
+    .update({ updated_at: new Date().toISOString(), warrior_creed: warriorCreed.trim() || null })
+    .eq('id', userId);
+
+  if (error) {
+    throw error;
+  }
+}
