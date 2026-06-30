@@ -114,11 +114,29 @@ Last updated: 2026-06-30
 - Phase 3 local verification:
   - `npx.cmd tsc --noEmit` passes.
   - `npm.cmd run build` passes and exports 25 static web routes.
+- Started Phase 4 goals system:
+  - Added typed goals domain models in `src/types/goals.ts`.
+  - Added Supabase goals service in `src/services/goals.ts`.
+  - Added `useGoalsData` hook for WARRIOR categories and user goals.
+  - Replaced the placeholder Goals tab with a real goal dashboard.
+  - Goals UI now supports:
+    - Loading and error states
+    - WARRIOR category filtering
+    - Goal creation
+    - Goal editing
+    - Progress updates in 10% steps
+    - Complete/active status transition at 100%
+    - Archive instead of destructive delete
+    - Top 10 action list storage
+    - Deadline, measurement, resources, and celebration-plan fields
+- Phase 4 local verification:
+  - `npx.cmd tsc --noEmit` passes.
+  - `npm.cmd run build` passes and exports 25 static web routes.
 
 ## Still Needed
 
 - Map structured worksheet responses into first-class app tables during the relevant feature phases:
-  - Phase 4: `goals`, `goal_reasons`, `vision_entries`, time-horizon goal tables.
+  - Phase 4 continuation: `goal_reasons`, `vision_entries`, time-horizon goal tables, monthly/weekly/daily planning rows.
   - Phase 5: `battle_reports_daily`, `battle_reports_weekly`, habit streak engine.
   - Phase 6: `affirmations`, routines, reminders, quotes/dashboard aggregation.
 - Run two-user RLS verification after the migration is applied.
