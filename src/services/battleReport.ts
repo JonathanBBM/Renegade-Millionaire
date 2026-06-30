@@ -70,6 +70,29 @@ export async function fetchDailyBattleReport(userId: string, reportDate: string)
   return data ? normalizeDaily(data as DailyBattleReport) : null;
 }
 
+function dateDaysAgo(dateText: string, daysAgo: number) {
+  const date = new Date(`${dateText}T00:00:00`);
+  date.setDate(date.getDate() - daysAgo);
+  return date.toISOString().slice(0, 10);
+}
+
+export async function fetchDailyBattleReportHistory(userId: string, endDate: string, days = 30) {
+  const startDate = dateDaysAgo(endDate, days - 1);
+  const { data, error } = await supabase
+    .from('battle_reports_daily')
+    .select('*')
+    .eq('user_id', userId)
+    .gte('report_date', startDate)
+    .lte('report_date', endDate)
+    .order('report_date', { ascending: false });
+
+  if (error) {
+    throw error;
+  }
+
+  return (data ?? []).map((row) => normalizeDaily(row as DailyBattleReport));
+}
+
 export async function upsertDailyBattleReport(userId: string, input: DailyBattleReportInput) {
   const { error } = await supabase.from('battle_reports_daily').upsert(
     {

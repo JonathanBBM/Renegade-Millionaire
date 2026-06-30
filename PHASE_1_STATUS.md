@@ -220,12 +220,20 @@ Last updated: 2026-06-30
 - Phase 8 ship prep verification:
   - `npx.cmd tsc --noEmit` passes.
   - `npm.cmd run build` passes and exports 25 static web routes.
+- Continued Phase 5 Battle Report habit engine:
+  - Added rolling daily Battle Report history loading from Supabase.
+  - Added a 14-day history strip showing completed habits/tasks per day.
+  - Replaced manual habit streak input with computed streak previews.
+  - Daily report saves now persist computed habit streak values based on prior daily reports with matching habit names.
+- Phase 5 habit engine verification:
+  - `npx.cmd tsc --noEmit` passes.
+  - `npm.cmd run build` passes and exports 25 static web routes.
 
 ## Still Needed
 
 - Map structured worksheet responses into first-class app tables during the relevant feature phases:
   - Phase 4 continuation: `goal_reasons`, `vision_entries`, time-horizon goal tables, monthly/weekly/daily planning rows.
-  - Phase 5 continuation: automatic habit streak computation, history calendar, and final Warrior Score formula.
+  - Phase 5 continuation: final Warrior Score formula and deeper Battle Report analytics.
   - Phase 6 continuation: reminders, notification scheduling, custom creed storage, and routine scheduling metadata.
 - Run two-user RLS verification after the migration is applied.
 - Continue deep content pass where exact long-form source text is needed beyond the app-ready summarized lesson bodies.

@@ -6,7 +6,13 @@ import { AppLoading, AppScreen } from '@/src/components/ui/AppShell';
 import { useBattleReportData } from '@/src/hooks/useBattleReportData';
 import { useAuth } from '@/src/providers/AuthProvider';
 import { upsertDailyBattleReport, upsertWeeklyBattleReport } from '@/src/services/battleReport';
-import { BattleActionTask, BattleHabit, DailyBattleReportInput, WeeklyBattleReportInput } from '@/src/types/battleReport';
+import {
+  BattleActionTask,
+  BattleHabit,
+  DailyBattleReport,
+  DailyBattleReportInput,
+  WeeklyBattleReportInput,
+} from '@/src/types/battleReport';
 
 const warriorCategories = ['Warfare', 'Arsenal', 'Riches', 'Relationships', 'Identity & Purpose', 'Occupation', 'Resolve'];
 
@@ -72,6 +78,43 @@ function toNumber(value: string) {
   return Number.isFinite(parsed) ? parsed : null;
 }
 
+function dateDaysAgo(dateText: string, daysAgo: number) {
+  const date = new Date(`${dateText}T00:00:00`);
+  date.setDate(date.getDate() - daysAgo);
+  return date.toISOString().slice(0, 10);
+}
+
+function normalizeHabitName(name: string) {
+  return name.trim().toLowerCase();
+}
+
+function didCompleteHabit(report: DailyBattleReport | undefined, habitName: string) {
+  const normalizedName = normalizeHabitName(habitName);
+  if (!report || !normalizedName) return false;
+  return report.habits.some((habit) => normalizeHabitName(habit.name) === normalizedName && habit.completed);
+}
+
+function computeHabitStreak(habit: BattleHabit, reportDate: string, history: DailyBattleReport[]) {
+  if (!habit.completed || !habit.name.trim()) return 0;
+
+  const historyByDate = new Map(history.filter((report) => report.report_date !== reportDate).map((report) => [report.report_date, report]));
+  let streak = 1;
+
+  for (let daysAgo = 1; daysAgo <= 29; daysAgo += 1) {
+    const priorDate = dateDaysAgo(reportDate, daysAgo);
+    const priorReport = historyByDate.get(priorDate);
+    if (!didCompleteHabit(priorReport, habit.name)) break;
+    streak += 1;
+  }
+
+  return streak;
+}
+
+function dayLabel(dateText: string) {
+  const [, month, day] = dateText.split('-');
+  return `${month}/${day}`;
+}
+
 const emptyDailyForm: DailyForm = {
   actionTasks: Array.from({ length: 4 }, () => ({ completed: false, text: '' })),
   biggest_win: '',
@@ -114,12 +157,17 @@ export default function BattleReportScreen() {
   const queryClient = useQueryClient();
   const [reportDate, setReportDate] = useState(todayString());
   const weekStartDate = useMemo(() => weekStartString(reportDate), [reportDate]);
-  const { daily, dailyError, isLoading, weekly, weeklyError } = useBattleReportData(reportDate, weekStartDate);
+  const { daily, dailyError, history, historyError, isLoading, weekly, weeklyError } = useBattleReportData(reportDate, weekStartDate);
   const [categoryFocus, setCategoryFocus] = useState<Record<string, string>>({});
   const [dailyForm, setDailyForm] = useState<DailyForm>(emptyDailyForm);
   const [weeklyForm, setWeeklyForm] = useState<WeeklyForm>(emptyWeeklyForm);
   const [isSavingDaily, setIsSavingDaily] = useState(false);
   const [isSavingWeekly, setIsSavingWeekly] = useState(false);
+  const habitStreaks = useMemo(
+    () => dailyForm.habits.map((habit) => computeHabitStreak(habit, reportDate, history)),
+    [dailyForm.habits, history, reportDate],
+  );
+  const historyDays = useMemo(() => Array.from({ length: 14 }, (_, index) => dateDaysAgo(reportDate, 13 - index)), [reportDate]);
 
   useEffect(() => {
     if (!daily) {
@@ -202,6 +250,7 @@ export default function BattleReportScreen() {
     if (!user?.id) return;
     await Promise.all([
       queryClient.invalidateQueries({ queryKey: ['battle-report-daily', user.id, reportDate] }),
+      queryClient.invalidateQueries({ queryKey: ['battle-report-history', user.id, reportDate] }),
       queryClient.invalidateQueries({ queryKey: ['battle-report-weekly', user.id, weekStartDate] }),
     ]);
   }
@@ -221,7 +270,7 @@ export default function BattleReportScreen() {
         focus: toNumber(dailyForm.focus),
         follow_ups: dailyForm.follow_ups || null,
         gratitude: dailyForm.gratitude || null,
-        habits: dailyForm.habits,
+        habits: dailyForm.habits.map((habit, index) => ({ ...habit, streak: habitStreaks[index] ?? 0 })),
         lessons: dailyForm.lessons || null,
         mission_priorities: splitLines(dailyForm.missionPrioritiesText),
         mistake: dailyForm.mistake || null,
@@ -281,11 +330,11 @@ export default function BattleReportScreen() {
     return <AppLoading label="Loading Battle Report..." />;
   }
 
-  if (dailyError || weeklyError) {
+  if (dailyError || weeklyError || historyError) {
     return (
       <AppScreen>
         <Text style={styles.title}>Battle Report unavailable</Text>
-        <Text style={styles.copy}>{(dailyError ?? weeklyError)?.message ?? 'Could not load Battle Report.'}</Text>
+        <Text style={styles.copy}>{(dailyError ?? weeklyError ?? historyError)?.message ?? 'Could not load Battle Report.'}</Text>
       </AppScreen>
     );
   }
@@ -298,6 +347,41 @@ export default function BattleReportScreen() {
           <Text style={styles.title}>Battle Report</Text>
           <Text style={styles.copy}>Run the day from mission priorities, habit streaks, and honest evening review.</Text>
           <Field label="Report date" onChangeText={setReportDate} value={reportDate} />
+        </View>
+
+        <View style={styles.card}>
+          <Text style={styles.sectionTitle}>History & Streaks</Text>
+          <Text style={styles.copy}>Streaks are calculated from completed habits in prior daily reports with the same habit name.</Text>
+          <View style={styles.historyStrip}>
+            {historyDays.map((dateText) => {
+              const report = history.find((item) => item.report_date === dateText);
+              const completedHabits = report?.habits.filter((habit) => habit.completed).length ?? 0;
+              const completedTasks = report?.action_tasks.filter((task) => task.completed).length ?? 0;
+              const isCurrentDate = dateText === reportDate;
+              return (
+                <View key={dateText} style={[styles.historyDay, isCurrentDate ? styles.historyDayActive : null]}>
+                  <Text style={styles.historyDate}>{dayLabel(dateText)}</Text>
+                  <Text style={styles.historyMetric}>{report ? `${completedHabits}H/${completedTasks}T` : '-'}</Text>
+                </View>
+              );
+            })}
+          </View>
+          {dailyForm.habits.some((habit) => habit.name.trim()) ? (
+            <View style={styles.streakGrid}>
+              {dailyForm.habits
+                .map((habit, index) => ({ habit, index, streak: habitStreaks[index] ?? 0 }))
+                .filter(({ habit }) => habit.name.trim())
+                .map(({ habit, index, streak }) => (
+                  <View key={`${habit.name}-${index}`} style={styles.streakCard}>
+                    <Text style={styles.label}>Computed streak</Text>
+                    <Text style={styles.streakValue}>{streak}</Text>
+                    <Text style={styles.copy}>{habit.name}</Text>
+                  </View>
+                ))}
+            </View>
+          ) : (
+            <Text style={styles.muted}>Add habits below to preview computed streaks.</Text>
+          )}
         </View>
 
         <View style={styles.card}>
@@ -333,13 +417,11 @@ export default function BattleReportScreen() {
               <Text style={styles.rowTitle}>Habit {index + 1}</Text>
               <Field label="Habit" onChangeText={(value) => updateHabit(index, { name: value })} value={habit.name} />
               <View style={styles.grid}>
-                <Field
-                  keyboardType="numeric"
-                  label="Streak"
-                  onChangeText={(value) => updateHabit(index, { streak: Number(value) || 0 })}
-                  value={String(habit.streak || '')}
-                />
                 <Field label="Target date" onChangeText={(value) => updateHabit(index, { target_date: value })} value={habit.target_date} />
+                <View style={styles.computedBox}>
+                  <Text style={styles.label}>Computed streak</Text>
+                  <Text style={styles.computedValue}>{habitStreaks[index] ?? 0}</Text>
+                </View>
               </View>
               <Toggle label="Done today" onChange={(value) => updateHabit(index, { completed: value })} value={habit.completed} />
             </View>
@@ -474,11 +556,38 @@ const styles = StyleSheet.create({
   },
   checkboxActive: { backgroundColor: '#d5a84c', borderColor: '#d5a84c' },
   checkmark: { color: '#14170f', fontSize: 14, fontWeight: '900' },
+  computedBox: {
+    backgroundColor: '#101410',
+    borderColor: '#343a32',
+    borderRadius: 8,
+    borderWidth: 1,
+    flex: 1,
+    gap: 4,
+    justifyContent: 'center',
+    minHeight: 48,
+    minWidth: 180,
+    padding: 12,
+  },
+  computedValue: { color: '#f5f1e8', fontSize: 20, fontWeight: '900' },
   content: { gap: 16, paddingBottom: 40 },
   copy: { color: '#c7cdbf', fontSize: 16, lineHeight: 23 },
   field: { gap: 7 },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
   header: { gap: 8 },
+  historyDate: { color: '#8d9488', fontSize: 11, fontWeight: '800' },
+  historyDay: {
+    backgroundColor: '#101410',
+    borderColor: '#343a32',
+    borderRadius: 8,
+    borderWidth: 1,
+    gap: 3,
+    minWidth: 64,
+    paddingHorizontal: 10,
+    paddingVertical: 9,
+  },
+  historyDayActive: { borderColor: '#d5a84c' },
+  historyMetric: { color: '#f5f1e8', fontSize: 13, fontWeight: '900' },
+  historyStrip: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   input: {
     backgroundColor: '#101410',
     borderColor: '#343a32',
@@ -504,6 +613,18 @@ const styles = StyleSheet.create({
   rowBox: { borderColor: '#2d342b', borderRadius: 8, borderWidth: 1, gap: 10, padding: 12 },
   rowTitle: { color: '#d5a84c', fontSize: 13, fontWeight: '900' },
   sectionTitle: { color: '#f5f1e8', fontSize: 20, fontWeight: '900', lineHeight: 25 },
+  streakCard: {
+    backgroundColor: '#101410',
+    borderColor: '#343a32',
+    borderRadius: 8,
+    borderWidth: 1,
+    flex: 1,
+    gap: 4,
+    minWidth: 180,
+    padding: 12,
+  },
+  streakGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
+  streakValue: { color: '#d5a84c', fontSize: 28, fontWeight: '900' },
   textArea: { minHeight: 104 },
   title: { color: '#f5f1e8', fontSize: 34, fontWeight: '900', lineHeight: 39 },
   toggle: {

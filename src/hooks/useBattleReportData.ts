@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { useAuth } from '@/src/providers/AuthProvider';
-import { fetchDailyBattleReport, fetchWeeklyBattleReport } from '@/src/services/battleReport';
+import { fetchDailyBattleReport, fetchDailyBattleReportHistory, fetchWeeklyBattleReport } from '@/src/services/battleReport';
 
 export function useBattleReportData(reportDate: string, weekStartDate: string) {
   const { user } = useAuth();
@@ -18,10 +18,18 @@ export function useBattleReportData(reportDate: string, weekStartDate: string) {
     queryKey: ['battle-report-weekly', user?.id, weekStartDate],
   });
 
+  const historyQuery = useQuery({
+    enabled: Boolean(user?.id),
+    queryFn: () => fetchDailyBattleReportHistory(user!.id, reportDate, 30),
+    queryKey: ['battle-report-history', user?.id, reportDate],
+  });
+
   return {
     daily: dailyQuery.data ?? null,
     dailyError: dailyQuery.error,
-    isLoading: dailyQuery.isLoading || weeklyQuery.isLoading,
+    history: historyQuery.data ?? [],
+    historyError: historyQuery.error,
+    isLoading: dailyQuery.isLoading || weeklyQuery.isLoading || historyQuery.isLoading,
     weekly: weeklyQuery.data ?? null,
     weeklyError: weeklyQuery.error,
   };
