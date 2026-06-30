@@ -1,7 +1,8 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
-import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
+import { AppLoading, AppScreen, EmptyState } from '@/src/components/ui/AppShell';
 import { useGoalsData } from '@/src/hooks/useGoalsData';
 import { useAuth } from '@/src/providers/AuthProvider';
 import { archiveGoal, createGoal, updateGoal, updateGoalProgress } from '@/src/services/goals';
@@ -173,25 +174,20 @@ export default function GoalsScreen() {
   }
 
   if (isLoading) {
-    return (
-      <View style={[styles.screen, styles.centered]}>
-        <ActivityIndicator />
-        <Text style={styles.muted}>Loading goals...</Text>
-      </View>
-    );
+    return <AppLoading label="Loading goals..." />;
   }
 
   if (categoriesError || goalsError) {
     return (
-      <View style={styles.screen}>
+      <AppScreen>
         <Text style={styles.title}>Goals unavailable</Text>
         <Text style={styles.copy}>{(categoriesError ?? goalsError)?.message ?? 'Could not load goals.'}</Text>
-      </View>
+      </AppScreen>
     );
   }
 
   return (
-    <View style={styles.screen}>
+    <AppScreen>
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.header}>
           <View style={styles.headerText}>
@@ -239,8 +235,10 @@ export default function GoalsScreen() {
           <View style={styles.listColumn}>
             {activeGoals.length === 0 ? (
               <View style={styles.card}>
-                <Text style={styles.sectionTitle}>No goals yet</Text>
-                <Text style={styles.copy}>Create the first active target, assign a WARRIOR category, and track progress here.</Text>
+                <EmptyState
+                  copy="Create the first active target, assign a WARRIOR category, and track progress here."
+                  title={selectedCategoryId ? 'No goals in this category' : 'No goals yet'}
+                />
               </View>
             ) : (
               activeGoals.map((goal) => (
@@ -372,13 +370,18 @@ export default function GoalsScreen() {
               })}
             </View>
 
-            <Pressable disabled={isSaving} onPress={handleSaveGoal} style={styles.primaryButton}>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={selectedGoal ? 'Save goal changes' : 'Create goal'}
+              disabled={isSaving}
+              onPress={handleSaveGoal}
+              style={styles.primaryButton}>
               <Text style={styles.primaryButtonText}>{isSaving ? 'Saving...' : selectedGoal ? 'Save Changes' : 'Create Goal'}</Text>
             </Pressable>
           </View>
         </View>
       </ScrollView>
-    </View>
+    </AppScreen>
   );
 }
 
@@ -426,7 +429,6 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   cardActions: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginTop: 4 },
-  centered: { alignItems: 'center', justifyContent: 'center', gap: 12 },
   content: { gap: 18, paddingBottom: 40 },
   copy: { color: '#c7cdbf', fontSize: 16, lineHeight: 23 },
   dangerButton: {
@@ -493,7 +495,6 @@ const styles = StyleSheet.create({
   label: { color: '#8d9488', fontSize: 12, fontWeight: '800', textTransform: 'uppercase' },
   layout: { flexDirection: 'row', flexWrap: 'wrap', gap: 16 },
   listColumn: { flex: 1.3, gap: 12, minWidth: 300 },
-  muted: { color: '#8d9488', fontSize: 14, lineHeight: 20 },
   option: {
     borderColor: '#343a32',
     borderRadius: 8,
@@ -518,7 +519,6 @@ const styles = StyleSheet.create({
   progressRow: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', gap: 12 },
   progressText: { color: '#c7cdbf', fontSize: 14, fontWeight: '800' },
   progressTrack: { backgroundColor: '#2d342b', borderRadius: 999, height: 8, overflow: 'hidden' },
-  screen: { backgroundColor: '#0f1210', flex: 1, padding: 20 },
   secondaryButton: {
     alignItems: 'center',
     borderColor: '#3a4037',

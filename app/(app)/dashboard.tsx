@@ -1,8 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 import { router } from 'expo-router';
 import { useMemo } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
+import { AppLoading, AppScreen, EmptyState } from '@/src/components/ui/AppShell';
 import { useBattleReportData } from '@/src/hooks/useBattleReportData';
 import { useCourseData } from '@/src/hooks/useCourseData';
 import { useGoalsData } from '@/src/hooks/useGoalsData';
@@ -46,16 +47,11 @@ export default function DashboardScreen() {
   const isLoading = courseLoading || goalsLoading || battleLoading || quotesQuery.isLoading;
 
   if (isLoading) {
-    return (
-      <View style={[styles.screen, styles.centered]}>
-        <ActivityIndicator />
-        <Text style={styles.muted}>Loading command center...</Text>
-      </View>
-    );
+    return <AppLoading label="Loading command center..." />;
   }
 
   return (
-    <View style={styles.screen}>
+    <AppScreen>
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.header}>
           <Text style={styles.kicker}>Command Center</Text>
@@ -108,9 +104,13 @@ export default function DashboardScreen() {
                 </Text>
               ))
             ) : (
-              <Text style={styles.copy}>No priorities logged for today yet.</Text>
+              <EmptyState copy="Open the Battle Report and set the mission priorities that will guide the day." title="No priorities logged" />
             )}
-            <Pressable onPress={() => router.push('/(app)/battle-report' as never)} style={styles.primaryButton}>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Log today's Battle Report"
+              onPress={() => router.push('/(app)/battle-report' as never)}
+              style={styles.primaryButton}>
               <Text style={styles.primaryButtonText}>Log Battle Report</Text>
             </Pressable>
           </View>
@@ -125,7 +125,7 @@ export default function DashboardScreen() {
           </View>
         </View>
       </ScrollView>
-    </View>
+    </AppScreen>
   );
 }
 
@@ -150,7 +150,6 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   cardValue: { color: '#f5f1e8', fontSize: 22, fontWeight: '900', lineHeight: 28 },
-  centered: { alignItems: 'center', justifyContent: 'center', gap: 12 },
   content: { gap: 16, paddingBottom: 40 },
   copy: { color: '#c7cdbf', fontSize: 16, lineHeight: 23 },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 16 },
@@ -168,7 +167,6 @@ const styles = StyleSheet.create({
   },
   metricLabel: { color: '#8d9488', fontSize: 12, fontWeight: '800', marginTop: 4, textTransform: 'uppercase' },
   metricValue: { color: '#f5f1e8', fontSize: 26, fontWeight: '900' },
-  muted: { color: '#8d9488', fontSize: 14, lineHeight: 20 },
   primaryButton: {
     alignItems: 'center',
     backgroundColor: '#d5a84c',
@@ -190,7 +188,6 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   quoteText: { color: '#f5f1e8', fontSize: 19, fontWeight: '800', lineHeight: 27 },
-  screen: { backgroundColor: '#0f1210', flex: 1, padding: 20 },
   secondaryButton: {
     alignItems: 'center',
     borderColor: '#3a4037',

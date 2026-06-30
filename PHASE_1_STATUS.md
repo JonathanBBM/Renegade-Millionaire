@@ -201,6 +201,15 @@ Last updated: 2026-06-30
 - Phase 6 profile verification:
   - `npx.cmd tsc --noEmit` passes.
   - `npm.cmd run build` passes and exports 25 static web routes.
+- Started Phase 7 polish/accessibility/responsive layout:
+  - Added shared `AppScreen`, `AppLoading`, and `EmptyState` UI primitives.
+  - Applied a max-width responsive shell to dashboard, course, goals, Battle Report, and profile screens.
+  - Forced the root navigation theme to the app's dark brand theme for consistent web/native chrome.
+  - Improved empty states on dashboard, goals, profile routines, and custom creed lines.
+  - Added accessibility labels/roles to key save and logging actions.
+- Phase 7 polish verification:
+  - `npx.cmd tsc --noEmit` passes.
+  - `npm.cmd run build` passes and exports 25 static web routes.
 
 ## Still Needed
 

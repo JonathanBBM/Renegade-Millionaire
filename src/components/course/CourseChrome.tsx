@@ -1,8 +1,10 @@
 import { PropsWithChildren } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 
+import { AppScreen, colors } from '@/src/components/ui/AppShell';
+
 export function CourseScreenShell({ children }: PropsWithChildren) {
-  return <View style={styles.screen}>{children}</View>;
+  return <AppScreen>{children}</AppScreen>;
 }
 
 export function CourseLoading() {
@@ -65,13 +67,12 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   centered: { alignItems: 'center', flex: 1, gap: 12, justifyContent: 'center' },
-  copy: { color: '#c7cdbf', fontSize: 16, lineHeight: 24 },
-  divider: { backgroundColor: '#2d342b', height: 1, marginVertical: 16 },
-  label: { color: '#8d9488', fontSize: 12, fontWeight: '800', textTransform: 'uppercase' },
-  muted: { color: '#8d9488', fontSize: 14, lineHeight: 20 },
-  screen: { backgroundColor: '#0f1210', flex: 1, padding: 20 },
-  sectionTitle: { color: '#f5f1e8', fontSize: 20, fontWeight: '900', lineHeight: 25 },
-  title: { color: '#f5f1e8', fontSize: 32, fontWeight: '900', lineHeight: 38 },
+  copy: { color: colors.copy, fontSize: 16, lineHeight: 24 },
+  divider: { backgroundColor: colors.border, height: 1, marginVertical: 16 },
+  label: { color: colors.muted, fontSize: 12, fontWeight: '800', textTransform: 'uppercase' },
+  muted: { color: colors.muted, fontSize: 14, lineHeight: 20 },
+  sectionTitle: { color: colors.text, fontSize: 20, fontWeight: '900', lineHeight: 25 },
+  title: { color: colors.text, fontSize: 32, fontWeight: '900', lineHeight: 38 },
 });
 
 export const courseStyles = styles;

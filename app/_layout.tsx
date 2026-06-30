@@ -1,10 +1,9 @@
 import { useFonts } from 'expo-font';
-import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
+import { DarkTheme, Stack, ThemeProvider } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
 
-import { useColorScheme } from '@/components/useColorScheme';
 import { AuthProvider } from '@/src/providers/AuthProvider';
 import { QueryProvider } from '@/src/providers/QueryProvider';
 
@@ -15,6 +14,18 @@ export {
 
 export const unstable_settings = {
   initialRouteName: 'index',
+};
+
+const appTheme = {
+  ...DarkTheme,
+  colors: {
+    ...DarkTheme.colors,
+    background: '#0f1210',
+    border: '#2d342b',
+    card: '#111511',
+    primary: '#d5a84c',
+    text: '#f5f1e8',
+  },
 };
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -44,10 +55,8 @@ export default function RootLayout() {
 }
 
 function RootLayoutNav() {
-  const colorScheme = useColorScheme();
-
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+    <ThemeProvider value={appTheme}>
       <QueryProvider>
         <AuthProvider>
           <Stack screenOptions={{ headerShown: false }}>

@@ -1,7 +1,8 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
-import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
+import { AppLoading, AppScreen, EmptyState } from '@/src/components/ui/AppShell';
 import { useProfileData } from '@/src/hooks/useProfileData';
 import { useAuth } from '@/src/providers/AuthProvider';
 import { archiveRoutine, createCustomAffirmation, createRoutine, deleteCustomAffirmation } from '@/src/services/profile';
@@ -91,25 +92,20 @@ export default function ProfileScreen() {
   }
 
   if (isLoading) {
-    return (
-      <View style={[styles.screen, styles.centered]}>
-        <ActivityIndicator />
-        <Text style={styles.muted}>Loading profile...</Text>
-      </View>
-    );
+    return <AppLoading label="Loading profile..." />;
   }
 
   if (affirmationsError || routinesError) {
     return (
-      <View style={styles.screen}>
+      <AppScreen>
         <Text style={styles.title}>Profile unavailable</Text>
         <Text style={styles.copy}>{(affirmationsError ?? routinesError)?.message ?? 'Could not load profile.'}</Text>
-      </View>
+      </AppScreen>
     );
   }
 
   return (
-    <View style={styles.screen}>
+    <AppScreen>
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.header}>
           <Text style={styles.kicker}>Profile & Practice</Text>
@@ -121,7 +117,12 @@ export default function ProfileScreen() {
           <Text style={styles.sectionTitle}>Custom Affirmation</Text>
           <Field label="Category" onChangeText={setAffirmationCategory} value={affirmationCategory} />
           <Field label="Affirmation" multiline onChangeText={setAffirmationText} value={affirmationText} />
-          <Pressable disabled={isSaving} onPress={saveAffirmation} style={styles.primaryButton}>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Save custom affirmation"
+            disabled={isSaving}
+            onPress={saveAffirmation}
+            style={styles.primaryButton}>
             <Text style={styles.primaryButtonText}>{isSaving ? 'Saving...' : 'Save Affirmation'}</Text>
           </Pressable>
         </View>
@@ -160,7 +161,7 @@ export default function ProfileScreen() {
               </View>
             ))
           ) : (
-            <Text style={styles.copy}>No custom creed lines yet.</Text>
+            <EmptyState copy="Save custom affirmations here to build a personal creed you can practice daily." title="No custom creed lines" />
           )}
         </View>
 
@@ -174,7 +175,7 @@ export default function ProfileScreen() {
           ))}
         </View>
       </ScrollView>
-    </View>
+    </AppScreen>
   );
 }
 
@@ -206,10 +207,10 @@ function RoutineCard({
           </View>
         ))
       ) : (
-        <Text style={styles.copy}>No habits saved yet.</Text>
+        <EmptyState copy="Add the first habit that belongs in this routine." title="No habits saved" />
       )}
       <Field label="Add habit" onChangeText={onChangeHabit} value={habit} />
-      <Pressable onPress={onSave} style={styles.primaryButton}>
+      <Pressable accessibilityRole="button" accessibilityLabel={`Add habit to ${title}`} onPress={onSave} style={styles.primaryButton}>
         <Text style={styles.primaryButtonText}>Add Habit</Text>
       </Pressable>
     </View>
@@ -254,7 +255,6 @@ const styles = StyleSheet.create({
     minWidth: 300,
     padding: 16,
   },
-  centered: { alignItems: 'center', justifyContent: 'center', gap: 12 },
   content: { gap: 16, paddingBottom: 40 },
   copy: { color: '#c7cdbf', fontSize: 16, lineHeight: 23 },
   dangerButton: {
@@ -282,7 +282,6 @@ const styles = StyleSheet.create({
   kicker: { color: '#d5a84c', fontSize: 13, fontWeight: '800', letterSpacing: 0, textTransform: 'uppercase' },
   label: { color: '#8d9488', fontSize: 12, fontWeight: '800', textTransform: 'uppercase' },
   libraryRow: { borderColor: '#2d342b', borderRadius: 8, borderWidth: 1, gap: 6, padding: 12 },
-  muted: { color: '#8d9488', fontSize: 14, lineHeight: 20 },
   primaryButton: {
     alignItems: 'center',
     backgroundColor: '#d5a84c',
@@ -293,7 +292,6 @@ const styles = StyleSheet.create({
   primaryButtonText: { color: '#14170f', fontSize: 15, fontWeight: '900' },
   row: { alignItems: 'center', flexDirection: 'row', gap: 12, justifyContent: 'space-between' },
   rowText: { flex: 1, gap: 4 },
-  screen: { backgroundColor: '#0f1210', flex: 1, padding: 20 },
   secondaryButton: {
     alignItems: 'center',
     borderColor: '#3a4037',

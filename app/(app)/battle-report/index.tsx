@@ -1,7 +1,8 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
-import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
+import { AppLoading, AppScreen } from '@/src/components/ui/AppShell';
 import { useBattleReportData } from '@/src/hooks/useBattleReportData';
 import { useAuth } from '@/src/providers/AuthProvider';
 import { upsertDailyBattleReport, upsertWeeklyBattleReport } from '@/src/services/battleReport';
@@ -277,25 +278,20 @@ export default function BattleReportScreen() {
   }
 
   if (isLoading) {
-    return (
-      <View style={[styles.screen, styles.centered]}>
-        <ActivityIndicator />
-        <Text style={styles.muted}>Loading Battle Report...</Text>
-      </View>
-    );
+    return <AppLoading label="Loading Battle Report..." />;
   }
 
   if (dailyError || weeklyError) {
     return (
-      <View style={styles.screen}>
+      <AppScreen>
         <Text style={styles.title}>Battle Report unavailable</Text>
         <Text style={styles.copy}>{(dailyError ?? weeklyError)?.message ?? 'Could not load Battle Report.'}</Text>
-      </View>
+      </AppScreen>
     );
   }
 
   return (
-    <View style={styles.screen}>
+    <AppScreen>
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.header}>
           <Text style={styles.kicker}>Phase 5</Text>
@@ -373,7 +369,12 @@ export default function BattleReportScreen() {
             onChangeText={(value) => updateDaily('self_improvement_hours', value)}
             value={dailyForm.self_improvement_hours}
           />
-          <Pressable disabled={isSavingDaily} onPress={saveDaily} style={styles.primaryButton}>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Save daily Battle Report"
+            disabled={isSavingDaily}
+            onPress={saveDaily}
+            style={styles.primaryButton}>
             <Text style={styles.primaryButtonText}>{isSavingDaily ? 'Saving...' : 'Save Daily Report'}</Text>
           </Pressable>
         </View>
@@ -396,12 +397,17 @@ export default function BattleReportScreen() {
           <Field label="Stop doing" multiline onChangeText={(value) => updateWeekly('stop_doing', value)} value={weeklyForm.stop_doing} />
           <Field keyboardType="numeric" label="Warrior score" onChangeText={(value) => updateWeekly('warrior_score', value)} value={weeklyForm.warrior_score} />
           <Field label="Next week battle cry" multiline onChangeText={(value) => updateWeekly('next_week_battle_cry', value)} value={weeklyForm.next_week_battle_cry} />
-          <Pressable disabled={isSavingWeekly} onPress={saveWeekly} style={styles.primaryButton}>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Save weekly Battle Report reset"
+            disabled={isSavingWeekly}
+            onPress={saveWeekly}
+            style={styles.primaryButton}>
             <Text style={styles.primaryButtonText}>{isSavingWeekly ? 'Saving...' : 'Save Weekly Reset'}</Text>
           </Pressable>
         </View>
       </ScrollView>
-    </View>
+    </AppScreen>
   );
 }
 
@@ -457,7 +463,6 @@ const styles = StyleSheet.create({
     gap: 14,
     padding: 16,
   },
-  centered: { alignItems: 'center', justifyContent: 'center', gap: 12 },
   checkbox: {
     alignItems: 'center',
     borderColor: '#596052',
@@ -498,7 +503,6 @@ const styles = StyleSheet.create({
   primaryButtonText: { color: '#14170f', fontSize: 15, fontWeight: '900' },
   rowBox: { borderColor: '#2d342b', borderRadius: 8, borderWidth: 1, gap: 10, padding: 12 },
   rowTitle: { color: '#d5a84c', fontSize: 13, fontWeight: '900' },
-  screen: { backgroundColor: '#0f1210', flex: 1, padding: 20 },
   sectionTitle: { color: '#f5f1e8', fontSize: 20, fontWeight: '900', lineHeight: 25 },
   textArea: { minHeight: 104 },
   title: { color: '#f5f1e8', fontSize: 34, fontWeight: '900', lineHeight: 39 },
