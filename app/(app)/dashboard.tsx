@@ -7,6 +7,7 @@ import { AppLoading, AppScreen, EmptyState } from '@/src/components/ui/AppShell'
 import { useBattleReportData } from '@/src/hooks/useBattleReportData';
 import { useCourseData } from '@/src/hooks/useCourseData';
 import { useGoalsData } from '@/src/hooks/useGoalsData';
+import { useRemindersData } from '@/src/hooks/useRemindersData';
 import { useAuth } from '@/src/providers/AuthProvider';
 import { fetchQuotes, pickDailyQuote } from '@/src/services/dashboard';
 import { getAllSections, getModuleStatus, getProgressMap } from '@/src/services/course';
@@ -29,6 +30,7 @@ export default function DashboardScreen() {
   const weekStartDate = weekStartString(dateText);
   const { isLoading: courseLoading, modules, progress } = useCourseData();
   const { goals, isLoading: goalsLoading } = useGoalsData();
+  const { isLoading: remindersLoading, reminders } = useRemindersData();
   const { daily, isLoading: battleLoading, weekly } = useBattleReportData(dateText, weekStartDate);
   const quotesQuery = useQuery({ queryFn: fetchQuotes, queryKey: ['quotes'] });
 
@@ -43,8 +45,11 @@ export default function DashboardScreen() {
   const priorities = daily?.mission_priorities ?? [];
   const habitsDone = daily?.habits.filter((habit) => habit.completed).length ?? 0;
   const habitsTotal = daily?.habits.length ?? 0;
+  const nextReminder = reminders
+    .filter((reminder) => reminder.is_enabled)
+    .sort((first, second) => (first.schedule.time ?? '99:99').localeCompare(second.schedule.time ?? '99:99'))[0];
 
-  const isLoading = courseLoading || goalsLoading || battleLoading || quotesQuery.isLoading;
+  const isLoading = courseLoading || goalsLoading || battleLoading || remindersLoading || quotesQuery.isLoading;
 
   if (isLoading) {
     return <AppLoading label="Loading command center..." />;
@@ -64,6 +69,7 @@ export default function DashboardScreen() {
           <Metric label="Active Goals" value={String(activeGoals.length)} />
           <Metric label="Today Focus" value={daily?.focus ? `${daily.focus}/10` : '-'} />
           <Metric label="Habits" value={habitsTotal > 0 ? `${habitsDone}/${habitsTotal}` : '-'} />
+          <Metric label="Next Reminder" value={nextReminder?.schedule.time ?? '-'} />
         </View>
 
         {quote ? (
@@ -121,6 +127,19 @@ export default function DashboardScreen() {
             <Text style={styles.copy}>{weekly?.next_week_battle_cry ?? "Set this week's battle cry and reset plan."}</Text>
             <Pressable onPress={() => router.push('/(app)/battle-report' as never)} style={styles.secondaryButton}>
               <Text style={styles.secondaryButtonText}>Open Weekly Reset</Text>
+            </Pressable>
+          </View>
+
+          <View style={styles.card}>
+            <Text style={styles.sectionTitle}>Next Reminder</Text>
+            <Text style={styles.cardValue}>{nextReminder?.schedule.time ?? 'No reminder'}</Text>
+            <Text style={styles.copy}>
+              {nextReminder
+                ? `${nextReminder.payload.label ?? nextReminder.reminder_type} / ${nextReminder.reminder_type}`
+                : 'Add reminder preferences in Profile.'}
+            </Text>
+            <Pressable onPress={() => router.push('/(app)/profile' as never)} style={styles.secondaryButton}>
+              <Text style={styles.secondaryButtonText}>Open Profile</Text>
             </Pressable>
           </View>
         </View>

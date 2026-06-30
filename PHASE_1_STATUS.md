@@ -228,13 +228,23 @@ Last updated: 2026-06-30
 - Phase 5 habit engine verification:
   - `npx.cmd tsc --noEmit` passes.
   - `npm.cmd run build` passes and exports 25 static web routes.
+- Continued Phase 6 reminders:
+  - Added typed reminder models in `src/types/reminders.ts`.
+  - Added Supabase reminder service in `src/services/reminders.ts`.
+  - Added `useRemindersData` hook.
+  - Added Profile reminder management for Battle Report, habit, quote, and module-unlock reminder preferences.
+  - Reminder UI now supports creation, enable/disable, and delete.
+  - Dashboard now surfaces the next enabled reminder time and label.
+- Phase 6 reminders verification:
+  - `npx.cmd tsc --noEmit` passes.
+  - `npm.cmd run build` passes and exports 25 static web routes.
 
 ## Still Needed
 
 - Map structured worksheet responses into first-class app tables during the relevant feature phases:
   - Phase 4 continuation: `goal_reasons`, `vision_entries`, time-horizon goal tables, monthly/weekly/daily planning rows.
   - Phase 5 continuation: final Warrior Score formula and deeper Battle Report analytics.
-  - Phase 6 continuation: reminders, notification scheduling, custom creed storage, and routine scheduling metadata.
+  - Phase 6 continuation: native push/local notification scheduling and custom creed storage.
 - Run two-user RLS verification after the migration is applied.
 - Continue deep content pass where exact long-form source text is needed beyond the app-ready summarized lesson bodies.
 - Add signature capture for Mission Brief Declaration in the native app slice.
