@@ -183,13 +183,31 @@ Last updated: 2026-06-30
 - Phase 6 dashboard verification:
   - `npx.cmd tsc --noEmit` passes.
   - `npm.cmd run build` passes and exports 25 static web routes.
+- Continued Phase 6 profile/affirmations/routines:
+  - Added Supabase migration `0006_seed_affirmations.sql` with 14 public affirmation seeds.
+  - Added typed profile domain models in `src/types/profile.ts`.
+  - Added Supabase profile service in `src/services/profile.ts`.
+  - Added `useProfileData` hook for affirmations and routines.
+  - Replaced the placeholder Profile tab with a usable identity and routine screen.
+  - Profile UI now supports:
+    - Public affirmation library grouped by WARRIOR category
+    - Custom affirmation creation
+    - Custom affirmation deletion
+    - Morning and evening routine lists
+    - Routine habit creation
+    - Routine archiving instead of destructive delete
+  - Applied migration `0006_seed_affirmations.sql` to remote Supabase project `qrazptjoyoaibxdhofuz`.
+  - Verified `seed_affirmations = 14`.
+- Phase 6 profile verification:
+  - `npx.cmd tsc --noEmit` passes.
+  - `npm.cmd run build` passes and exports 25 static web routes.
 
 ## Still Needed
 
 - Map structured worksheet responses into first-class app tables during the relevant feature phases:
   - Phase 4 continuation: `goal_reasons`, `vision_entries`, time-horizon goal tables, monthly/weekly/daily planning rows.
   - Phase 5 continuation: automatic habit streak computation, history calendar, and final Warrior Score formula.
-  - Phase 6 continuation: reminders, notification scheduling, affirmation library/custom creed storage, routine CRUD.
+  - Phase 6 continuation: reminders, notification scheduling, custom creed storage, and routine scheduling metadata.
 - Run two-user RLS verification after the migration is applied.
 - Continue deep content pass where exact long-form source text is needed beyond the app-ready summarized lesson bodies.
 - Add signature capture for Mission Brief Declaration in the native app slice.
