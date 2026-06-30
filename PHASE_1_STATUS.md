@@ -165,13 +165,31 @@ Last updated: 2026-06-30
 - Phase 5 Battle Report verification:
   - `npx.cmd tsc --noEmit` passes.
   - `npm.cmd run build` passes and exports 25 static web routes.
+- Started Phase 6 dashboard/quotes:
+  - Added Supabase migration `0005_seed_quotes.sql` with 10 course-derived daily quotes.
+  - Added dashboard quote types and service.
+  - Replaced the Phase 1 Dashboard placeholder with a real Command Center.
+  - Dashboard now aggregates:
+    - Course completion percentage
+    - Next course module
+    - Active goal count and top goal progress
+    - Today's Battle Report focus score
+    - Habit completion count
+    - Today's mission priorities
+    - Weekly reset score and battle cry
+    - Daily quote rotation
+  - Applied migration `0005_seed_quotes.sql` to remote Supabase project `qrazptjoyoaibxdhofuz`.
+  - Verified `quote_count = 10`.
+- Phase 6 dashboard verification:
+  - `npx.cmd tsc --noEmit` passes.
+  - `npm.cmd run build` passes and exports 25 static web routes.
 
 ## Still Needed
 
 - Map structured worksheet responses into first-class app tables during the relevant feature phases:
   - Phase 4 continuation: `goal_reasons`, `vision_entries`, time-horizon goal tables, monthly/weekly/daily planning rows.
   - Phase 5 continuation: automatic habit streak computation, history calendar, and final Warrior Score formula.
-  - Phase 6: `affirmations`, routines, reminders, quotes/dashboard aggregation.
+  - Phase 6 continuation: reminders, notification scheduling, affirmation library/custom creed storage, routine CRUD.
 - Run two-user RLS verification after the migration is applied.
 - Continue deep content pass where exact long-form source text is needed beyond the app-ready summarized lesson bodies.
 - Add signature capture for Mission Brief Declaration in the native app slice.
