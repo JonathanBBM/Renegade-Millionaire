@@ -141,12 +141,36 @@ Last updated: 2026-06-30
 - Course content refresh verification:
   - `npx.cmd tsc --noEmit` passes.
   - `npm.cmd run build` passes and exports 25 static web routes.
+- Started Phase 5 Battle Report:
+  - Added typed Battle Report domain models in `src/types/battleReport.ts`.
+  - Added Supabase Battle Report service in `src/services/battleReport.ts`.
+  - Added `useBattleReportData` hook for daily and weekly report records.
+  - Replaced the placeholder Battle Report tab with a usable daily/weekly execution screen.
+  - Daily report UI now supports:
+    - Report date selection
+    - Energy, focus, weight, and water tracking
+    - WARRIOR category focus notes
+    - Mission priorities
+    - Four habit streak rows
+    - Four action task rows
+    - Evening war log, follow-ups, lessons, wins, mistakes, gratitude, and self-improvement hours
+  - Weekly reset UI now supports:
+    - Battle objective
+    - Key targets
+    - Victories and lessons
+    - Goal/priorities/habit alignment toggles
+    - Tactical adjustments
+    - Warrior score manual entry
+    - Next week battle cry
+- Phase 5 Battle Report verification:
+  - `npx.cmd tsc --noEmit` passes.
+  - `npm.cmd run build` passes and exports 25 static web routes.
 
 ## Still Needed
 
 - Map structured worksheet responses into first-class app tables during the relevant feature phases:
   - Phase 4 continuation: `goal_reasons`, `vision_entries`, time-horizon goal tables, monthly/weekly/daily planning rows.
-  - Phase 5: `battle_reports_daily`, `battle_reports_weekly`, habit streak engine.
+  - Phase 5 continuation: automatic habit streak computation, history calendar, and final Warrior Score formula.
   - Phase 6: `affirmations`, routines, reminders, quotes/dashboard aggregation.
 - Run two-user RLS verification after the migration is applied.
 - Continue deep content pass where exact long-form source text is needed beyond the app-ready summarized lesson bodies.
